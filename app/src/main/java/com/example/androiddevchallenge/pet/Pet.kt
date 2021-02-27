@@ -1,8 +1,11 @@
 package com.example.androiddevchallenge.pet
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -10,9 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.domain.PetRepository
 import com.example.androiddevchallenge.ui.theme.MyTheme
 import com.example.androiddevchallenge.viewModelFactory
@@ -36,6 +41,16 @@ private fun PetContent(name: String, description: String) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Icon(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(2f)
+                    .background(color = MaterialTheme.colors.secondary)
+                    .padding(4.dp),
+                tint = MaterialTheme.colors.onSecondary,
+                painter = painterResource(id = R.drawable.ic_dog),
+                contentDescription = null
+            )
             Text(
                 text = name,
                 style = MaterialTheme.typography.h3,
