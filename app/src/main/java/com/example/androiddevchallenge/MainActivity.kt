@@ -19,9 +19,13 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navArgument
+import androidx.navigation.compose.navigate
+import androidx.navigation.compose.rememberNavController
 import com.example.androiddevchallenge.pet.PetScreen
 import com.example.androiddevchallenge.petlist.PetListScreen
 import com.example.androiddevchallenge.ui.theme.MyTheme
@@ -40,17 +44,15 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-sealed class Screen {
-    object List : Screen()
-    data class Item(val id: String) : Screen()
-}
-
 @Composable
 fun MyApp() {
-    val currentScreen = remember { mutableStateOf<Screen>(Screen.List) }
-    when(val screen = currentScreen.value) {
-        Screen.List -> PetListScreen(openPet = { currentScreen.value = Screen.Item(it) })
-        is Screen.Item -> PetScreen(id = screen.id)
+    val navController = rememberNavController()
+    NavHost(navController, "pets") {
+        composable("pets") { PetListScreen(openPet = { navController.navigate("pets/$it") }) }
+        composable(
+            "pets/{petId}",
+            arguments = listOf(navArgument("petId") { type = NavType.StringType })
+        ) { entry -> PetScreen(id = entry.arguments?.getString("petId")!!) }
     }
 }
 
