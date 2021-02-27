@@ -19,6 +19,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -26,6 +27,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
+import com.example.androiddevchallenge.domain.PetRepository
 import com.example.androiddevchallenge.pet.PetScreen
 import com.example.androiddevchallenge.petlist.PetListScreen
 import com.example.androiddevchallenge.ui.theme.MyTheme
@@ -46,13 +48,24 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 fun MyApp() {
+    val repository = remember { PetRepository() }
     val navController = rememberNavController()
     NavHost(navController, "pets") {
-        composable("pets") { PetListScreen(openPet = { navController.navigate("pets/$it") }) }
+        composable("pets") {
+            PetListScreen(
+                repository = repository,
+                openPet = { navController.navigate("pets/$it") }
+            )
+        }
         composable(
             "pets/{petId}",
             arguments = listOf(navArgument("petId") { type = NavType.StringType })
-        ) { entry -> PetScreen(id = entry.arguments?.getString("petId")!!) }
+        ) { entry ->
+            PetScreen(
+                id = entry.arguments?.getString("petId")!!,
+                repository = repository
+            )
+        }
     }
 }
 
