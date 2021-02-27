@@ -9,19 +9,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.domain.PetRepository
 import com.example.androiddevchallenge.ui.theme.MyTheme
+import com.example.androiddevchallenge.viewModelFactory
 
 
 @Composable
 fun PetScreen(id: String, repository: PetRepository) {
-    val viewModel: PetViewModel = viewModel(factory = object : ViewModelProvider.Factory{
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-            PetViewModel(id, repository) as T
-    })
+    val viewModel: PetViewModel = viewModel(
+        factory = viewModelFactory { PetViewModel(id, repository) }
+    )
     val pet = viewModel.state.collectAsState(null).value
     if (pet != null) {
         PetContent(pet.name, pet.description)
