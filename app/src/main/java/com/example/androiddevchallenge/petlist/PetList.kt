@@ -11,7 +11,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,9 +26,8 @@ fun PetListScreen(repository: PetRepository, openPet: (String) -> Unit) {
     val viewModel: PetListViewModel = viewModel(
         factory = viewModelFactory { PetListViewModel(repository) }
     )
-    val currentOpenPet by rememberUpdatedState(openPet)
     val list by viewModel.state.collectAsState()
-    PetList(list, currentOpenPet)
+    PetList(list, openPet)
 }
 
 @Composable
