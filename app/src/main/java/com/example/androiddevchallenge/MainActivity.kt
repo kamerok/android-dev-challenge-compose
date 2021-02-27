@@ -18,29 +18,39 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.androiddevchallenge.pet.PetScreen
+import com.example.androiddevchallenge.petlist.PetListScreen
 import com.example.androiddevchallenge.ui.theme.MyTheme
+import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme {
-                MyApp()
+                ProvideWindowInsets {
+                    MyApp()
+                }
             }
         }
     }
 }
 
-// Start building your app here!
+sealed class Screen {
+    object List : Screen()
+    data class Item(val id: String) : Screen()
+}
+
 @Composable
 fun MyApp() {
-    Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+    val currentScreen = remember { mutableStateOf<Screen>(Screen.List) }
+    when(val screen = currentScreen.value) {
+        Screen.List -> PetListScreen(openPet = { currentScreen.value = Screen.Item(it) })
+        is Screen.Item -> PetScreen(id = screen.id)
     }
 }
 
