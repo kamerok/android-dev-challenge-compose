@@ -1,14 +1,19 @@
 package com.example.androiddevchallenge.pet
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -41,6 +46,18 @@ private fun PetContent(name: String, description: String) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val backDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
+            TopAppBar(
+                title = { Text(text = name) },
+                navigationIcon = {
+                    IconButton(onClick = { backDispatcherOwner.onBackPressedDispatcher.onBackPressed() }) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
             Icon(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -50,11 +67,6 @@ private fun PetContent(name: String, description: String) {
                 tint = MaterialTheme.colors.onSecondary,
                 painter = painterResource(id = R.drawable.ic_dog),
                 contentDescription = null
-            )
-            Text(
-                text = name,
-                style = MaterialTheme.typography.h3,
-                modifier = Modifier.padding(16.dp),
             )
             Text(
                 text = description,

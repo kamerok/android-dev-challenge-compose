@@ -17,7 +17,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -37,8 +36,7 @@ fun PetListScreen(repository: PetRepository, openPet: (String) -> Unit) {
         factory = viewModelFactory { PetListViewModel(repository) }
     )
     val list by viewModel.state.collectAsState()
-    val sortedList = remember(list) { list.sortedBy { it.name } }
-    PetList(sortedList, openPet)
+    PetList(list, openPet)
 }
 
 @Composable
