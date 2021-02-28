@@ -16,10 +16,21 @@
 package com.example.androiddevchallenge
 
 import android.os.Bundle
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -48,23 +59,45 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 fun MyApp() {
-    val repository = remember { PetRepository() }
-    val navController = rememberNavController()
-    NavHost(navController, "pets") {
-        composable("pets") {
-            PetListScreen(
-                repository = repository,
-                openPet = { navController.navigate("pets/$it") }
-            )
-        }
-        composable(
-            "pets/{petId}",
-            arguments = listOf(navArgument("petId") { type = NavType.StringType })
-        ) { entry ->
-            PetScreen(
-                id = entry.arguments?.getString("petId")!!,
-                repository = repository
-            )
+    Column {
+        val repository = remember { PetRepository() }
+        val navController = rememberNavController()
+
+        var topBarState by remember { mutableStateOf("Pets" to false) }
+
+        TopAppBar(
+            title = { Text(text = topBarState.first) },
+            navigationIcon = if (topBarState.second) {
+                {
+                    val backDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
+                    IconButton(onClick = { backDispatcherOwner.onBackPressedDispatcher.onBackPressed() }) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                }
+            } else null,
+        )
+        NavHost(navController, "pets") {
+            composable("pets") {
+                PetListScreen(
+                    repository = repository,
+                    setupAppBar = { title, isBackEnabled -> topBarState = title to isBackEnabled },
+                    openPet = { navController.navigate("pets/$it") }
+                )
+            }
+            composable(
+                "pets/{petId}",
+                arguments = listOf(navArgument("petId") { type = NavType.StringType })
+            ) { entry ->
+                PetScreen(
+                    id = entry.arguments?.getString("petId")!!,
+                    repository = repository
+                ) { title, isBackEnabled ->
+                    topBarState = title to isBackEnabled
+                }
+            }
         }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,7 +32,15 @@ import com.example.androiddevchallenge.viewModelFactory
 
 
 @Composable
-fun PetListScreen(repository: PetRepository, openPet: (String) -> Unit) {
+fun PetListScreen(
+    repository: PetRepository,
+    setupAppBar: (String, Boolean) -> Unit,
+    openPet: (String) -> Unit
+) {
+    LaunchedEffect(setupAppBar) {
+        setupAppBar("Pets", false)
+    }
+
     val viewModel: PetListViewModel = viewModel(
         factory = viewModelFactory { PetListViewModel(repository) }
     )

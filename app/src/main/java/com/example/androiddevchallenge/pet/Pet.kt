@@ -1,20 +1,16 @@
 package com.example.androiddevchallenge.pet
 
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,35 +25,26 @@ import com.example.androiddevchallenge.viewModelFactory
 
 
 @Composable
-fun PetScreen(id: String, repository: PetRepository) {
+fun PetScreen(id: String, repository: PetRepository, setupAppBar: (String, Boolean) -> Unit) {
     val viewModel: PetViewModel = viewModel(
         factory = viewModelFactory { PetViewModel(id, repository) }
     )
     val pet = viewModel.state.collectAsState(null).value
     if (pet != null) {
-        PetContent(pet.name, pet.description)
+        LaunchedEffect(true) {
+            setupAppBar(pet.name, true)
+        }
+        PetContent(pet.description)
     }
 }
 
 @Composable
-private fun PetContent(name: String, description: String) {
+private fun PetContent(description: String) {
     Surface {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val backDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
-            TopAppBar(
-                title = { Text(text = name) },
-                navigationIcon = {
-                    IconButton(onClick = { backDispatcherOwner.onBackPressedDispatcher.onBackPressed() }) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
             Icon(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -81,7 +68,6 @@ private fun PetContent(name: String, description: String) {
 fun PetScreenPreview() {
     MyTheme {
         PetContent(
-            "Name",
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
         )
     }
